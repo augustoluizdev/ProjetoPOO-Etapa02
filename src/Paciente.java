@@ -1,63 +1,91 @@
-public class Paciente {
-    public String nome;
-    public String cpf;
+public class Paciente extends Pessoa {
+
     public int idade;
-    public String telefone;
     public String convenioNome;
     public boolean ativo;
 
+
+    // construtor básico
     public Paciente(String nome, String cpf) {
-        this.nome = nome;
-        this.cpf = cpf;
+
+        super(nome, cpf, "", "");
+
         this.idade = 0;
-        this.telefone = "";
         this.convenioNome = "";
         this.ativo = true;
+
     }
 
+
+    // construtor com idade e telefone
     public Paciente(String nome, String cpf, int idade, String telefone) {
-        this.nome = nome;
-        this.cpf = cpf;
+
+        super(nome, cpf, telefone, "");
+
         this.idade = idade;
-        this.telefone = telefone;
         this.convenioNome = "";
         this.ativo = true;
+
     }
 
-    // construtor com todos os dados
+
+    // construtor completo
     public Paciente(String nome, String cpf, int idade, String telefone, String convenioNome) {
-        this.nome = nome;
-        this.cpf = cpf;
+
+        super(nome, cpf, telefone, "");
+
         this.idade = idade;
-        this.telefone = telefone;
         this.convenioNome = convenioNome;
         this.ativo = true;
+
     }
 
-    // atualiza so idade e telefone
+
+    // atualiza idade e telefone
     public void complementar(int idade, String telefone) {
+
         this.idade = idade;
-        this.telefone = telefone;
+        setTelefone(telefone);
+
     }
 
-    // atualiza tudo incluindo convenio
+
+    // atualiza idade, telefone e convenio
     public void complementar(int idade, String telefone, String convenioNome) {
+
         this.idade = idade;
-        this.telefone = telefone;
+        setTelefone(telefone);
         this.convenioNome = convenioNome;
+
     }
+
 
     public void desativar() {
+
         this.ativo = false;
+
     }
 
-    public String exibirResumo() {
+
+    @Override
+    public void exibirResumo() {
+
         String status = "Sim";
+
         if (!ativo) {
             status = "Nao";
         }
-        return "Nome: " + nome + " | CPF: " + cpf + " | Idade: " + idade
-                + " | Tel: " + telefone + " | Convenio: " + convenioNome
-                + " | Ativo: " + status;
+
+
+        System.out.println(
+            "Nome: " + getNome() +
+            " | CPF: " + getCpf() +
+            " | Idade: " + idade +
+            " | Tel: " + getTelefone() +
+            " | Convenio: " + convenioNome +
+            " | Ativo: " + status
+        );
+
     }
+
 }
