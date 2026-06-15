@@ -19,6 +19,19 @@ public class Pagamento {
         this.parcelas = parcelas;
     }
 
+    // NOVO MÉTODO DA ETAPA 6: Calcula valor final baseado no Profissional e Atendimento
+    public void calcularAtendimento(Profissional prof, Atendimento atd) {
+        // Pega o valor base cobrado pelo profissional
+        double valorAcumulado = prof.valorConsulta;
+        
+        // Regra de Negócio: Cada procedimento extra realizado no atendimento soma R$ 50.00
+        if (atd.totalProcedimentos > 0) {
+            valorAcumulado += (atd.totalProcedimentos * 50.0);
+        }
+        
+        this.valorFinal = valorAcumulado;
+    }
+
     // sem desconto nenhum
     public static double calcularValor(double valorBase) {
         return valorBase;
@@ -47,7 +60,7 @@ public class Pagamento {
     public String exibirResumo() {
         // arredonda pra 2 casas
         double valorArredondado = Math.round(valorFinal * 100.0) / 100.0;
-        String resumo = "Consulta #" + indiceConsulta + " | Valor: R$" + valorArredondado
+        String resumo = "Consulta #" + indiceConsulta + " | Valor Total: R$" + valorArredondado
                 + " | Tipo: " + tipoPagamento + " | Parcelas: " + parcelas;
         if (parcelas > 1) {
             double valorParcela = Math.round((valorFinal / parcelas) * 100.0) / 100.0;
