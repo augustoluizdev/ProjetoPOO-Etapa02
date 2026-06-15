@@ -1,11 +1,10 @@
 public class Paciente extends Pessoa {
 
-    public int idade;
-    public String convenioNome;
-    public boolean ativo;
+    private int idade;
+    private String convenioNome;
+    private boolean ativo;
 
 
-    // construtor básico
     public Paciente(String nome, String cpf) {
 
         super(nome, cpf, "", "");
@@ -17,7 +16,6 @@ public class Paciente extends Pessoa {
     }
 
 
-    // construtor com idade e telefone
     public Paciente(String nome, String cpf, int idade, String telefone) {
 
         super(nome, cpf, telefone, "");
@@ -29,8 +27,8 @@ public class Paciente extends Pessoa {
     }
 
 
-    // construtor completo
-    public Paciente(String nome, String cpf, int idade, String telefone, String convenioNome) {
+    public Paciente(String nome, String cpf, int idade,
+                    String telefone, String convenioNome) {
 
         super(nome, cpf, telefone, "");
 
@@ -41,7 +39,6 @@ public class Paciente extends Pessoa {
     }
 
 
-    // atualiza idade e telefone
     public void complementar(int idade, String telefone) {
 
         this.idade = idade;
@@ -50,7 +47,6 @@ public class Paciente extends Pessoa {
     }
 
 
-    // atualiza idade, telefone e convenio
     public void complementar(int idade, String telefone, String convenioNome) {
 
         this.idade = idade;
@@ -67,21 +63,42 @@ public class Paciente extends Pessoa {
     }
 
 
+    public int getIdade() {
+        return idade;
+    }
+
+
+    public void setIdade(int idade) {
+        this.idade = idade;
+    }
+
+
+    public String getConvenioNome() {
+        return convenioNome;
+    }
+
+
+    public void setConvenioNome(String convenioNome) {
+        this.convenioNome = convenioNome;
+    }
+
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+
     @Override
     public void exibirResumo() {
 
-        String status = "Sim";
-
-        if (!ativo) {
-            status = "Nao";
-        }
+        String status = ativo ? "Sim" : "Nao";
 
 
         System.out.println(
-            "Nome: " + getNome() +
+            "Paciente: " + getNome() +
             " | CPF: " + getCpf() +
             " | Idade: " + idade +
-            " | Tel: " + getTelefone() +
+            " | Telefone: " + getTelefone() +
             " | Convenio: " + convenioNome +
             " | Ativo: " + status
         );
