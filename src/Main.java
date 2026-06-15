@@ -13,27 +13,9 @@ public class Main {
         );
 
 
-        // Criando dias de atendimento
-        String[] dias = {"Segunda", "Quarta", "Sexta"};
-
-
-        // Criando um profissional
-        Profissional profissional = new Profissional(
-                "Dr. Carlos",
-                "clinica geral",
-                "CRM12345",
-                250.0,
-                dias,
-                3
-        );
-
-
-        // Testando os métodos herdados de Pessoa
+        // Testando a especialização de Pessoa
         paciente.exibirResumo();
 
-        System.out.println("----------------------");
-
-        profissional.exibirResumo();
 
     }
 

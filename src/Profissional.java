@@ -1,4 +1,4 @@
-public class Profissional extends Pessoa {
+public abstract class Profissional extends Pessoa {
 
     public String especialidade;
     public String registroProfissional;
@@ -145,5 +145,9 @@ public class Profissional extends Pessoa {
         );
 
     }
+
+
+    // método obrigatório para futuras especializações
+    public abstract void registrarEspecifico();
 
 }
