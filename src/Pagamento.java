@@ -1,71 +1,50 @@
-public class Pagamento {
+public abstract class Pagamento {
     public int indiceConsulta;
+    public double valorBase;
     public double valorFinal;
     public String tipoPagamento;
     public int parcelas;
 
-    public Pagamento(int indiceConsulta, double valorFinal, String tipoPagamento) {
+    protected Pagamento(int indiceConsulta, String tipoPagamento) {
         this.indiceConsulta = indiceConsulta;
-        this.valorFinal = valorFinal;
         this.tipoPagamento = tipoPagamento;
+        this.valorBase = 0.0;
+        this.valorFinal = 0.0;
         this.parcelas = 1;
     }
 
-    // com parcelas (so pra cartao)
-    public Pagamento(int indiceConsulta, double valorFinal, String tipoPagamento, int parcelas) {
-        this.indiceConsulta = indiceConsulta;
-        this.valorFinal = valorFinal;
-        this.tipoPagamento = tipoPagamento;
+    protected Pagamento(int indiceConsulta, String tipoPagamento, int parcelas) {
+        this(indiceConsulta, tipoPagamento);
         this.parcelas = parcelas;
     }
 
-    // NOVO MÉTODO DA ETAPA 6: Calcula valor final baseado no Profissional e Atendimento
     public void calcularAtendimento(Profissional prof, Atendimento atd) {
-        // Pega o valor base cobrado pelo profissional
         double valorAcumulado = prof.valorConsulta;
-        
-        // Regra de Negócio: Cada procedimento extra realizado no atendimento soma R$ 50.00
+
         if (atd.totalProcedimentos > 0) {
             valorAcumulado += (atd.totalProcedimentos * 50.0);
         }
-        
-        this.valorFinal = valorAcumulado;
+
+        this.valorBase = valorAcumulado;
+        this.valorFinal = calcularValorFinal();
     }
 
-    // sem desconto nenhum
-    public static double calcularValor(double valorBase) {
-        return valorBase;
-    }
-
-    // com desconto em percentual
-    public static double calcularValor(double valorBase, double percentualDesconto) {
-        double desconto = valorBase * percentualDesconto / 100;
-        double valor = valorBase - desconto;
-        if (valor < 0) {
-            valor = 0;
-        }
-        return valor;
-    }
-
-    // com desconto e multa somada
-    public static double calcularValor(double valorBase, double percentualDesconto, double multa) {
-        double desconto = valorBase * percentualDesconto / 100;
-        double valor = valorBase - desconto + multa;
-        if (valor < 0) {
-            valor = 0;
-        }
-        return valor;
-    }
+    public abstract double calcularValorFinal();
 
     public String exibirResumo() {
-        // arredonda pra 2 casas
-        double valorArredondado = Math.round(valorFinal * 100.0) / 100.0;
-        String resumo = "Consulta #" + indiceConsulta + " | Valor Total: R$" + valorArredondado
-                + " | Tipo: " + tipoPagamento + " | Parcelas: " + parcelas;
+        double valorBaseArredondado = Math.round(valorBase * 100.0) / 100.0;
+        double valorFinalArredondado = Math.round(valorFinal * 100.0) / 100.0;
+
+        String resumo = "Consulta #" + indiceConsulta
+                + " | Valor Base: R$" + valorBaseArredondado
+                + " | Valor Final: R$" + valorFinalArredondado
+                + " | Tipo: " + tipoPagamento;
+
         if (parcelas > 1) {
             double valorParcela = Math.round((valorFinal / parcelas) * 100.0) / 100.0;
-            resumo = resumo + " (R$" + valorParcela + " cada)";
+            resumo = resumo + " | Parcelas: " + parcelas + " (R$" + valorParcela + " cada)";
         }
+
         return resumo;
     }
 }

@@ -39,9 +39,9 @@ public class Main {
         System.out.println(atendimento.exibirResumo());
         System.out.println("--------------------------------------------");
 
-        // 5. ETAPA 6: Executando a sua regra de negócio de faturamento dinâmico em Pagamento
-        Pagamento pagamento = new Pagamento(indiceDaConsulta, 0.0, "Cartão de Crédito", 2);
-        pagamento.calcularAtendimento(medico, atendimento); // Usa o seu método inteligente!
+        // 5. ETAPA 8: Processamento de pagamentos baseado em polimorfismo
+        Pagamento pagamento = new PagamentoCartao(indiceDaConsulta, 2);
+        pagamento.calcularAtendimento(medico, atendimento);
         
         System.out.println("=== RESUMO DO PAGAMENTO ===");
         System.out.println(pagamento.exibirResumo());
