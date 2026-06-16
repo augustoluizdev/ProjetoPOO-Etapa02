@@ -1,55 +1,44 @@
+import java.util.ArrayList;
+
 public class Atendimento {
     public int indiceConsulta;
     public String observacoes;
     public String diagnostico;
-    public String[] procedimentos;
-    public int totalProcedimentos;
+    
+    public ArrayList<String> procedimentos;
 
-    // registro basico - so observacoes
     public Atendimento(int indiceConsulta, String observacoes) {
         this.indiceConsulta = indiceConsulta;
         this.observacoes = observacoes;
         this.diagnostico = "";
-        this.procedimentos = new String[10];
-        this.totalProcedimentos = 0;
+        this.procedimentos = new ArrayList<String>();
     }
 
     public Atendimento(int indiceConsulta, String observacoes, String diagnostico) {
         this.indiceConsulta = indiceConsulta;
         this.observacoes = observacoes;
         this.diagnostico = diagnostico;
-        this.procedimentos = new String[10];
-        this.totalProcedimentos = 0;
+        this.procedimentos = new ArrayList<String>();
     }
 
-    // registro completo com procedimentos ja definidos
     public Atendimento(int indiceConsulta, String observacoes, String diagnostico,
-                       String[] procedimentos, int totalProcedimentos) {
+                       ArrayList<String> procedimentos) {
         this.indiceConsulta = indiceConsulta;
         this.observacoes = observacoes;
         this.diagnostico = diagnostico;
-        this.procedimentos = new String[10];
-        this.totalProcedimentos = totalProcedimentos;
-        for (int i = 0; i < totalProcedimentos; i++) {
-            this.procedimentos[i] = procedimentos[i];
+        this.procedimentos = new ArrayList<String>();
+        for (String procedimento : procedimentos) {
+            this.procedimentos.add(procedimento);
         }
     }
 
-    // adiciona um por vez
     public void adicionarProcedimento(String procedimento) {
-        if (totalProcedimentos < 10) {
-            procedimentos[totalProcedimentos] = procedimento;
-            totalProcedimentos++;
-        }
+        procedimentos.add(procedimento);
     }
 
-    // adiciona varios de uma vez
-    public void adicionarProcedimento(String[] procs, int quantidade) {
-        for (int i = 0; i < quantidade; i++) {
-            if (totalProcedimentos < 10) {
-                procedimentos[totalProcedimentos] = procs[i];
-                totalProcedimentos++;
-            }
+    public void adicionarProcedimento(ArrayList<String> procs) {
+        for (String procedimento : procs) {
+            procedimentos.add(procedimento);
         }
     }
 
@@ -60,11 +49,11 @@ public class Atendimento {
             resumo = resumo + "\nDiagnostico: " + diagnostico;
         }
 
-        if (totalProcedimentos > 0) {
+        if (procedimentos.size() > 0) {
             resumo = resumo + "\nProcedimentos: ";
-            for (int i = 0; i < totalProcedimentos; i++) {
-                resumo = resumo + procedimentos[i];
-                if (i < totalProcedimentos - 1) {
+            for (int i = 0; i < procedimentos.size(); i++) {
+                resumo = resumo + procedimentos.get(i);
+                if (i < procedimentos.size() - 1) {
                     resumo = resumo + ", ";
                 }
             }

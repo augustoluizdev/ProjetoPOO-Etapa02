@@ -1,13 +1,13 @@
+import java.util.ArrayList;
+
 public abstract class Profissional extends Pessoa {
 
     public String especialidade;
     public String registroProfissional;
     public double valorConsulta;
-    public String[] diasDisponiveis;
-    public int totalDias;
+    public ArrayList<String> diasDisponiveis;
 
 
-    // somente nome e especialidade
     public Profissional(String nome, String especialidade) {
 
         super(nome, "", "", "");
@@ -15,13 +15,11 @@ public abstract class Profissional extends Pessoa {
         this.especialidade = especialidade;
         this.registroProfissional = "";
         this.valorConsulta = 0;
-        this.diasDisponiveis = new String[7];
-        this.totalDias = 0;
+        this.diasDisponiveis = new ArrayList<String>();
 
     }
 
 
-    // nome, especialidade, registro e valor
     public Profissional(String nome, String especialidade,
                         String registroProfissional, double valorConsulta) {
 
@@ -30,34 +28,26 @@ public abstract class Profissional extends Pessoa {
         this.especialidade = especialidade;
         this.registroProfissional = registroProfissional;
         this.valorConsulta = valorConsulta;
-        this.diasDisponiveis = new String[7];
-        this.totalDias = 0;
+        this.diasDisponiveis = new ArrayList<String>();
 
     }
 
 
-    // construtor completo com dias
     public Profissional(String nome, String especialidade,
                         String registroProfissional,
                         double valorConsulta,
-                        String[] dias,
-                        int totalDias) {
+                        ArrayList<String> dias) {
 
         super(nome, "", "", "");
 
         this.especialidade = especialidade;
         this.registroProfissional = registroProfissional;
         this.valorConsulta = valorConsulta;
+        this.diasDisponiveis = new ArrayList<String>();
 
-        this.diasDisponiveis = new String[7];
+        for (String dia : dias) {
 
-        this.totalDias = totalDias;
-
-
-        for (int i = 0; i < totalDias; i++) {
-
-            this.diasDisponiveis[i] = dias[i];
-
+            this.diasDisponiveis.add(dia);
         }
 
     }
@@ -72,29 +62,26 @@ public abstract class Profissional extends Pessoa {
 
 
     public void atualizar(String registro, double valor,
-                          String[] dias, int totalDias) {
+                          ArrayList<String> dias) {
 
         this.registroProfissional = registro;
         this.valorConsulta = valor;
 
-        this.totalDias = totalDias;
+        this.diasDisponiveis.clear();
 
+        for (String dia : dias) {
 
-        for (int i = 0; i < totalDias; i++) {
-
-            this.diasDisponiveis[i] = dias[i];
-
+            this.diasDisponiveis.add(dia);
         }
 
     }
 
 
-    // verifica se atende naquele dia
     public boolean atendeNoDia(String dia) {
 
-        for (int i = 0; i < totalDias; i++) {
+        for (String diaDisponivel : diasDisponiveis) {
 
-            if (diasDisponiveis[i].equals(dia)) {
+            if (diaDisponivel.equals(dia)) {
 
                 return true;
 
@@ -107,7 +94,6 @@ public abstract class Profissional extends Pessoa {
     }
 
 
-    // valida especialidades
     public static boolean especialidadeValida(String esp) {
 
         if (esp.equals("clinica geral")) return true;
@@ -125,13 +111,13 @@ public abstract class Profissional extends Pessoa {
 
         String dias = "";
 
-        for (int i = 0; i < totalDias; i++) {
+        for (int i = 0; i < diasDisponiveis.size(); i++) {
 
             if (i > 0) {
                 dias += ", ";
             }
 
-            dias += diasDisponiveis[i];
+            dias += diasDisponiveis.get(i);
 
         }
 
@@ -147,7 +133,7 @@ public abstract class Profissional extends Pessoa {
     }
 
 
-    // método obrigatório para futuras especializações
     public abstract void registrarEspecifico();
 
 }
+
