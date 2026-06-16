@@ -4,14 +4,16 @@ public class Atendimento {
     public String diagnostico;
     public String[] procedimentos;
     public int totalProcedimentos;
+    private Prontuario prontuario;
 
-    // registro basico - so observacoes
+    // COMPOSICAO: o prontuario e criado dentro do atendimento e nao existe sem ele.
     public Atendimento(int indiceConsulta, String observacoes) {
         this.indiceConsulta = indiceConsulta;
         this.observacoes = observacoes;
         this.diagnostico = "";
         this.procedimentos = new String[10];
         this.totalProcedimentos = 0;
+        this.prontuario = new Prontuario(observacoes, "");
     }
 
     public Atendimento(int indiceConsulta, String observacoes, String diagnostico) {
@@ -20,9 +22,9 @@ public class Atendimento {
         this.diagnostico = diagnostico;
         this.procedimentos = new String[10];
         this.totalProcedimentos = 0;
+        this.prontuario = new Prontuario(observacoes, diagnostico);
     }
 
-    // registro completo com procedimentos ja definidos
     public Atendimento(int indiceConsulta, String observacoes, String diagnostico,
                        String[] procedimentos, int totalProcedimentos) {
         this.indiceConsulta = indiceConsulta;
@@ -30,45 +32,47 @@ public class Atendimento {
         this.diagnostico = diagnostico;
         this.procedimentos = new String[10];
         this.totalProcedimentos = totalProcedimentos;
+        this.prontuario = new Prontuario(observacoes, diagnostico);
+
         for (int i = 0; i < totalProcedimentos; i++) {
             this.procedimentos[i] = procedimentos[i];
+            this.prontuario.adicionarProcedimento(procedimentos[i]);
         }
     }
 
-    // adiciona um por vez
+    public Prontuario getProntuario() {
+        return prontuario;
+    }
+
     public void adicionarProcedimento(String procedimento) {
         if (totalProcedimentos < 10) {
             procedimentos[totalProcedimentos] = procedimento;
             totalProcedimentos++;
+            prontuario.adicionarProcedimento(procedimento);
         }
     }
 
-    // adiciona varios de uma vez
     public void adicionarProcedimento(String[] procs, int quantidade) {
         for (int i = 0; i < quantidade; i++) {
             if (totalProcedimentos < 10) {
                 procedimentos[totalProcedimentos] = procs[i];
                 totalProcedimentos++;
+                prontuario.adicionarProcedimento(procs[i]);
             }
         }
     }
 
+    public void atualizarObservacoes(String observacoes) {
+        this.observacoes = observacoes;
+        prontuario.setObservacoes(observacoes);
+    }
+
+    public void atualizarDiagnostico(String diagnostico) {
+        this.diagnostico = diagnostico;
+        prontuario.setDiagnostico(diagnostico);
+    }
+
     public String exibirResumo() {
-        String resumo = "Observacoes: " + observacoes;
-
-        if (!diagnostico.equals("")) {
-            resumo = resumo + "\nDiagnostico: " + diagnostico;
-        }
-
-        if (totalProcedimentos > 0) {
-            resumo = resumo + "\nProcedimentos: ";
-            for (int i = 0; i < totalProcedimentos; i++) {
-                resumo = resumo + procedimentos[i];
-                if (i < totalProcedimentos - 1) {
-                    resumo = resumo + ", ";
-                }
-            }
-        }
-        return resumo;
+        return prontuario.exibirResumo();
     }
 }

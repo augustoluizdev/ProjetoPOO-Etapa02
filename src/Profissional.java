@@ -4,10 +4,11 @@ public abstract class Profissional extends Pessoa {
     public String registroProfissional;
     public double valorConsulta;
     public String[] diasDisponiveis;
+    private HorarioDisponivel[] horariosDisponiveis;
+    private int totalHorarios;
     public int totalDias;
 
 
-    // somente nome e especialidade
     public Profissional(String nome, String especialidade) {
 
         super(nome, "", "", "");
@@ -16,12 +17,13 @@ public abstract class Profissional extends Pessoa {
         this.registroProfissional = "";
         this.valorConsulta = 0;
         this.diasDisponiveis = new String[7];
+        this.horariosDisponiveis = new HorarioDisponivel[10];
+        this.totalHorarios = 0;
         this.totalDias = 0;
 
     }
 
 
-    // nome, especialidade, registro e valor
     public Profissional(String nome, String especialidade,
                         String registroProfissional, double valorConsulta) {
 
@@ -31,12 +33,13 @@ public abstract class Profissional extends Pessoa {
         this.registroProfissional = registroProfissional;
         this.valorConsulta = valorConsulta;
         this.diasDisponiveis = new String[7];
+        this.horariosDisponiveis = new HorarioDisponivel[10];
+        this.totalHorarios = 0;
         this.totalDias = 0;
 
     }
 
 
-    // construtor completo com dias
     public Profissional(String nome, String especialidade,
                         String registroProfissional,
                         double valorConsulta,
@@ -48,9 +51,9 @@ public abstract class Profissional extends Pessoa {
         this.especialidade = especialidade;
         this.registroProfissional = registroProfissional;
         this.valorConsulta = valorConsulta;
-
         this.diasDisponiveis = new String[7];
-
+        this.horariosDisponiveis = new HorarioDisponivel[10];
+        this.totalHorarios = 0;
         this.totalDias = totalDias;
 
 
@@ -76,7 +79,6 @@ public abstract class Profissional extends Pessoa {
 
         this.registroProfissional = registro;
         this.valorConsulta = valor;
-
         this.totalDias = totalDias;
 
 
@@ -89,7 +91,25 @@ public abstract class Profissional extends Pessoa {
     }
 
 
-    // verifica se atende naquele dia
+    // AGREGACAO: o profissional usa horarios disponiveis, mas eles sobrevivem sem ele.
+    public void adicionarHorario(HorarioDisponivel horario) {
+        if (totalHorarios < horariosDisponiveis.length) {
+            horariosDisponiveis[totalHorarios] = horario;
+            totalHorarios++;
+        }
+    }
+
+
+    public HorarioDisponivel[] getHorariosDisponiveis() {
+        return horariosDisponiveis;
+    }
+
+
+    public int getTotalHorarios() {
+        return totalHorarios;
+    }
+
+
     public boolean atendeNoDia(String dia) {
 
         for (int i = 0; i < totalDias; i++) {
@@ -102,12 +122,17 @@ public abstract class Profissional extends Pessoa {
 
         }
 
+        for (int i = 0; i < totalHorarios; i++) {
+            if (horariosDisponiveis[i].getDiaSemana().equals(dia)) {
+                return true;
+            }
+        }
+
         return false;
 
     }
 
 
-    // valida especialidades
     public static boolean especialidadeValida(String esp) {
 
         if (esp.equals("clinica geral")) return true;
@@ -124,6 +149,7 @@ public abstract class Profissional extends Pessoa {
     public void exibirResumo() {
 
         String dias = "";
+        String horarios = "";
 
         for (int i = 0; i < totalDias; i++) {
 
@@ -135,19 +161,29 @@ public abstract class Profissional extends Pessoa {
 
         }
 
+        for (int i = 0; i < totalHorarios; i++) {
+
+            if (i > 0) {
+                horarios += ", ";
+            }
+
+            horarios += horariosDisponiveis[i].exibirResumo();
+
+        }
+
 
         System.out.println(
             "Nome: " + getNome() +
             " | Espec: " + especialidade +
             " | Reg: " + registroProfissional +
             " | Valor: R$" + valorConsulta +
-            " | Dias: " + dias
+            " | Dias: " + dias +
+            " | Horarios: " + horarios
         );
 
     }
 
 
-    // método obrigatório para futuras especializações
     public abstract void registrarEspecifico();
 
 }
