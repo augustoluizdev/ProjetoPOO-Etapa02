@@ -2,14 +2,13 @@ import java.util.ArrayList;
 
 public class Relatorio {
 
-    // mostra todas as consultas
     public static void gerarRelatorio(ArrayList<Consulta> consultas,
                                       ArrayList<Atendimento> atendimentos) {
         System.out.println("\n=== RELATORIO GERAL ===");
         for (int i = 0; i < consultas.size(); i++) {
             Consulta consulta = consultas.get(i);
             System.out.println(consulta.exibirResumo());
-            // verifica se tem diagnostico
+       
             String diag = buscarDiagnostico(i, atendimentos);
             if (!diag.equals("")) {
                 System.out.println("  Diagnostico: " + diag);

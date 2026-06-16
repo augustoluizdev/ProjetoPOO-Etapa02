@@ -12,6 +12,7 @@ public class Main {
         ArrayList<Atendimento> atendimentos = new ArrayList<Atendimento>();
         ArrayList<Pagamento> pagamentos = new ArrayList<Pagamento>();
         ArrayList<Double> multas = new ArrayList<Double>();
+        ArrayList<Pessoa> pessoas = new ArrayList<Pessoa>();
 
         HashSet<String> cpfsCadastrados = new HashSet<String>();
 
@@ -42,6 +43,7 @@ public class Main {
 
         pacientes.add(paciente);
         pacientesPorCpf.put(paciente.getCpf(), paciente);
+        pessoas.add(paciente);
 
         Profissional profissional = new Profissional(
                 "Ana Costa",
@@ -60,6 +62,7 @@ public class Main {
 
         profissionais.add(profissional);
         profissionaisPorNome.put(profissional.getNome(), profissional);
+        pessoas.add(profissional);
 
         Consulta consulta = new Consulta(
                 paciente.getCpf(),
@@ -93,6 +96,20 @@ public class Main {
         System.out.println("\nProfissionais cadastrados:");
         for (Profissional prof : profissionais) {
             prof.exibirResumo();
+        }
+
+        System.out.println("\nDemonstracao de Dynamic Casting:");
+        for (Pessoa pessoa : pessoas) {
+
+            if (pessoa instanceof Paciente) {
+                Paciente pacienteConvertido = (Paciente) pessoa;
+                System.out.println("Convenio do paciente: " + pacienteConvertido.getConvenioNome());
+            }
+
+            if (pessoa instanceof Profissional) {
+                Profissional profissionalConvertido = (Profissional) pessoa;
+                System.out.println("Especialidade do profissional: " + profissionalConvertido.getEspecialidade());
+            }
         }
 
         try {

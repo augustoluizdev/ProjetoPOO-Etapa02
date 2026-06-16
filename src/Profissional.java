@@ -61,6 +61,11 @@ public abstract class Profissional extends Pessoa {
     }
 
 
+    public String getEspecialidade() {
+        return especialidade;
+    }
+
+
     public void atualizar(String registro, double valor,
                           ArrayList<String> dias) {
 

@@ -6,7 +6,6 @@ public class Consulta {
     public String tipo;
     public String status;
 
-    // sem tipo - assume inicial
     public Consulta(String cpfPaciente, String nomeProfissional, String data, String horario) {
         this.cpfPaciente = cpfPaciente;
         this.nomeProfissional = nomeProfissional;
@@ -25,7 +24,6 @@ public class Consulta {
         this.status = "agendada";
     }
 
-    // esse aqui a gente usa na remarcacao pra poder setar o status direto
     public Consulta(String cpfPaciente, String nomeProfissional, String data,
                     String horario, String tipo, String status) {
         this.cpfPaciente = cpfPaciente;
@@ -39,8 +37,7 @@ public class Consulta {
     public void cancelar() {
         this.status = "cancelada";
     }
-
-    // cancelar com motivo - retorna a msg formatada
+    
     public String cancelar(String motivo) {
         this.status = "cancelada";
         return "Consulta cancelada. Motivo: " + motivo;

@@ -11,7 +11,6 @@ public class Pagamento {
         this.parcelas = 1;
     }
 
-    // com parcelas (so pra cartao)
     public Pagamento(int indiceConsulta, double valorFinal, String tipoPagamento, int parcelas) {
         this.indiceConsulta = indiceConsulta;
         this.valorFinal = valorFinal;
@@ -19,12 +18,10 @@ public class Pagamento {
         this.parcelas = parcelas;
     }
 
-    // sem desconto nenhum
     public static double calcularValor(double valorBase) {
         return valorBase;
     }
 
-    // com desconto em percentual
     public static double calcularValor(double valorBase, double percentualDesconto) {
         double desconto = valorBase * percentualDesconto / 100;
         double valor = valorBase - desconto;
@@ -34,7 +31,6 @@ public class Pagamento {
         return valor;
     }
 
-    // com desconto e multa somada
     public static double calcularValor(double valorBase, double percentualDesconto, double multa) {
         double desconto = valorBase * percentualDesconto / 100;
         double valor = valorBase - desconto + multa;
@@ -45,7 +41,7 @@ public class Pagamento {
     }
 
     public String exibirResumo() {
-        // arredonda pra 2 casas
+       
         double valorArredondado = Math.round(valorFinal * 100.0) / 100.0;
         String resumo = "Consulta #" + indiceConsulta + " | Valor: R$" + valorArredondado
                 + " | Tipo: " + tipoPagamento + " | Parcelas: " + parcelas;
