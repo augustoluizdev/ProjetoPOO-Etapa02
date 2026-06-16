@@ -95,10 +95,12 @@ public class Main {
             prof.exibirResumo();
         }
 
-        if (pacientesPorCpf.containsKey(cpf)) {
-            Paciente pacienteEncontrado = pacientesPorCpf.get(cpf);
+        try {
+            Paciente pacienteEncontrado = buscarPacientePorCpf(pacientesPorCpf, cpf);
             System.out.println("\nBusca por CPF:");
             pacienteEncontrado.exibirResumo();
+        } catch (PacienteNaoEncontradoException e) {
+            System.out.println(e.getMessage());
         }
 
         String nomeProfissional = "Ana Costa";
@@ -116,6 +118,19 @@ public class Main {
         Relatorio.gerarRelatorio(consultas, atendimentos);
         Relatorio.gerarResumoFinanceiro(consultas, pagamentos, multas);
 
+    }
+
+    public static Paciente buscarPacientePorCpf(HashMap<String, Paciente> pacientesPorCpf,
+                                                String cpf)
+            throws PacienteNaoEncontradoException {
+
+        if (!pacientesPorCpf.containsKey(cpf)) {
+            throw new PacienteNaoEncontradoException(
+                    "Paciente não encontrado para o CPF informado."
+            );
+        }
+
+        return pacientesPorCpf.get(cpf);
     }
 
 }
