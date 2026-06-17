@@ -13,6 +13,7 @@ public class Main {
         ArrayList<Pagamento> pagamentos = new ArrayList<Pagamento>();
         ArrayList<Double> multas = new ArrayList<Double>();
         ArrayList<Pessoa> pessoas = new ArrayList<Pessoa>();
+        ClinicaServico clinicaServico = new ClinicaServico();
 
         HashSet<String> cpfsCadastrados = new HashSet<String>();
 
@@ -20,17 +21,8 @@ public class Main {
         HashMap<String, Profissional> profissionaisPorNome = new HashMap<String, Profissional>();
 
         String cpf = "123.456.789-00";
-
-        if (cpfsCadastrados.contains(cpf)) {
+        if (!cpfsCadastrados.add(cpf)) {
             System.out.println("CPF ja cadastrado.");
-        }
-
-        if (!cpfsCadastrados.add(cpf)) {
-            System.out.println("CPF já cadastrado.");
-        }
-
-        if (!cpfsCadastrados.add(cpf)) {
-            System.out.println("CPF já cadastrado.");
         }
 
         Paciente paciente = new Paciente(
@@ -64,24 +56,46 @@ public class Main {
         profissionaisPorNome.put(profissional.getNome(), profissional);
         pessoas.add(profissional);
 
-        Consulta consulta = new Consulta(
-                paciente.getCpf(),
-                profissional.getNome(),
-                "16/06/2026",
-                "14:00",
-                "inicial"
-        );
-
-        consultas.add(consulta);
+        try {
+            Consulta consulta = clinicaServico.agendarConsulta(
+                    pacientesPorCpf,
+                    profissionaisPorNome,
+                    consultas,
+                    paciente.getCpf(),
+                    profissional.getNome(),
+                    "16/06/2026",
+                    "14:00",
+                    "inicial",
+                    "segunda"
+            );
+            System.out.println("\nConsulta agendada com sucesso:");
+            System.out.println(consulta.exibirResumo());
+        } catch (PacienteNaoEncontradoException e) {
+            System.out.println(e.getMessage());
+        } catch (ProfissionalNaoEncontradoException e) {
+            System.out.println(e.getMessage());
+        } catch (PacienteInativoException e) {
+            System.out.println(e.getMessage());
+        } catch (HorarioIndisponivelException e) {
+            System.out.println(e.getMessage());
+        }
 
         Atendimento atendimento = new Atendimento(0, "Paciente relatou melhora.", "Evolucao positiva");
         atendimento.adicionarProcedimento("Avaliacao inicial");
         atendimento.adicionarProcedimento("Orientacao de cuidados");
-
         atendimentos.add(atendimento);
 
-        Pagamento pagamento = new Pagamento(0, Pagamento.calcularValor(profissional.valorConsulta), "pix");
-        pagamentos.add(pagamento);
+        try {
+            Pagamento pagamento = clinicaServico.registrarPagamento(
+                    0,
+                    Pagamento.calcularValor(profissional.valorConsulta),
+                    "pix",
+                    1
+            );
+            pagamentos.add(pagamento);
+        } catch (PagamentoInvalidoException e) {
+            System.out.println(e.getMessage());
+        }
         multas.add(0.0);
 
         Paciente primeiroPaciente = pacientes.get(0);
@@ -113,18 +127,22 @@ public class Main {
         }
 
         try {
-            Paciente pacienteEncontrado = buscarPacientePorCpf(pacientesPorCpf, cpf);
+            Paciente pacienteEncontrado = clinicaServico.buscarPacientePorCpf(pacientesPorCpf, cpf);
             System.out.println("\nBusca por CPF:");
             pacienteEncontrado.exibirResumo();
         } catch (PacienteNaoEncontradoException e) {
             System.out.println(e.getMessage());
         }
 
-        String nomeProfissional = "Ana Costa";
-        if (profissionaisPorNome.containsKey(nomeProfissional)) {
-            Profissional profissionalEncontrado = profissionaisPorNome.get(nomeProfissional);
+        try {
+            Profissional profissionalEncontrado = clinicaServico.buscarProfissionalPorNome(
+                    profissionaisPorNome,
+                    "Ana Costa"
+            );
             System.out.println("\nBusca por nome do profissional:");
             profissionalEncontrado.exibirResumo();
+        } catch (ProfissionalNaoEncontradoException e) {
+            System.out.println(e.getMessage());
         }
 
         System.out.println("\nValores do mapa de pacientes:");
@@ -132,22 +150,91 @@ public class Main {
             p.exibirResumo();
         }
 
-        Relatorio.gerarRelatorio(consultas, atendimentos);
-        Relatorio.gerarResumoFinanceiro(consultas, pagamentos, multas);
-
-    }
-
-    public static Paciente buscarPacientePorCpf(HashMap<String, Paciente> pacientesPorCpf,
-                                                String cpf)
-            throws PacienteNaoEncontradoException {
-
-        if (!pacientesPorCpf.containsKey(cpf)) {
-            throw new PacienteNaoEncontradoException(
-                    "Paciente não encontrado para o CPF informado."
+        try {
+            clinicaServico.agendarConsulta(
+                    pacientesPorCpf,
+                    profissionaisPorNome,
+                    consultas,
+                    paciente.getCpf(),
+                    profissional.getNome(),
+                    "16/06/2026",
+                    "14:00",
+                    "retorno",
+                    "segunda"
             );
+        } catch (PacienteNaoEncontradoException e) {
+            System.out.println(e.getMessage());
+        } catch (ProfissionalNaoEncontradoException e) {
+            System.out.println(e.getMessage());
+        } catch (PacienteInativoException e) {
+            System.out.println(e.getMessage());
+        } catch (HorarioIndisponivelException e) {
+            System.out.println("\nExcecao de horario tratada:");
+            System.out.println(e.getMessage());
         }
 
-        return pacientesPorCpf.get(cpf);
-    }
+        paciente.desativar();
+        try {
+            clinicaServico.agendarConsulta(
+                    pacientesPorCpf,
+                    profissionaisPorNome,
+                    consultas,
+                    paciente.getCpf(),
+                    profissional.getNome(),
+                    "18/06/2026",
+                    "15:00",
+                    "retorno",
+                    "quarta"
+            );
+        } catch (PacienteNaoEncontradoException e) {
+            System.out.println(e.getMessage());
+        } catch (ProfissionalNaoEncontradoException e) {
+            System.out.println(e.getMessage());
+        } catch (PacienteInativoException e) {
+            System.out.println("\nExcecao de paciente inativo tratada:");
+            System.out.println(e.getMessage());
+        } catch (HorarioIndisponivelException e) {
+            System.out.println(e.getMessage());
+        }
 
+        try {
+            clinicaServico.buscarProfissionalPorNome(profissionaisPorNome, "Profissional Inexistente");
+        } catch (ProfissionalNaoEncontradoException e) {
+            System.out.println("\nExcecao de profissional nao encontrado tratada:");
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            clinicaServico.buscarConsulta(consultas, paciente.getCpf(), "20/06/2026", "09:00");
+        } catch (ConsultaNaoEncontradaException e) {
+            System.out.println("\nExcecao de consulta nao encontrada tratada:");
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            Consulta consultaRealizada = clinicaServico.buscarConsulta(
+                    consultas,
+                    paciente.getCpf(),
+                    "16/06/2026",
+                    "14:00"
+            );
+            consultaRealizada.realizar();
+            clinicaServico.cancelarConsulta(consultaRealizada);
+        } catch (ConsultaNaoEncontradaException e) {
+            System.out.println(e.getMessage());
+        } catch (OperacaoInvalidaException e) {
+            System.out.println("\nExcecao de operacao invalida tratada:");
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            clinicaServico.registrarPagamento(1, 50.0, "cheque", 1);
+        } catch (PagamentoInvalidoException e) {
+            System.out.println("\nExcecao de pagamento invalido tratada:");
+            System.out.println(e.getMessage());
+        }
+
+        Relatorio.gerarRelatorio(consultas, atendimentos);
+        Relatorio.gerarResumoFinanceiro(consultas, pagamentos, multas);
+    }
 }
