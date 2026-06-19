@@ -7,6 +7,7 @@ public class Atendimento {
     
     public ArrayList<String> procedimentos;
 
+    // SOBRECARGA: mesmo nome, parametros diferentes (resolvido em tempo de compilacao)
     public Atendimento(int indiceConsulta, String observacoes) {
         this.indiceConsulta = indiceConsulta;
         this.observacoes = observacoes;
@@ -32,6 +33,7 @@ public class Atendimento {
         }
     }
 
+    // SOBRECARGA: mesmo nome, parametros diferentes (resolvido em tempo de compilacao)
     public void adicionarProcedimento(String procedimento) {
         procedimentos.add(procedimento);
     }

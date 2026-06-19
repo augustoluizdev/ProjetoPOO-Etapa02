@@ -7,7 +7,7 @@ public abstract class Profissional extends Pessoa {
     public double valorConsulta;
     public ArrayList<String> diasDisponiveis;
 
-
+    // SOBRECARGA: mesmo nome, parametros diferentes (resolvido em tempo de compilacao)
     public Profissional(String nome, String especialidade) {
 
         super(nome, "", "", "");
@@ -18,7 +18,6 @@ public abstract class Profissional extends Pessoa {
         this.diasDisponiveis = new ArrayList<String>();
 
     }
-
 
     public Profissional(String nome, String especialidade,
                         String registroProfissional, double valorConsulta) {
@@ -31,7 +30,6 @@ public abstract class Profissional extends Pessoa {
         this.diasDisponiveis = new ArrayList<String>();
 
     }
-
 
     public Profissional(String nome, String especialidade,
                         String registroProfissional,
@@ -46,13 +44,12 @@ public abstract class Profissional extends Pessoa {
         this.diasDisponiveis = new ArrayList<String>();
 
         for (String dia : dias) {
-
             this.diasDisponiveis.add(dia);
         }
 
     }
 
-
+    // SOBRECARGA: mesmo nome, parametros diferentes (resolvido em tempo de compilacao)
     public void atualizar(String registro, double valor) {
 
         this.registroProfissional = registro;
@@ -60,11 +57,9 @@ public abstract class Profissional extends Pessoa {
 
     }
 
-
     public String getEspecialidade() {
         return especialidade;
     }
-
 
     public void atualizar(String registro, double valor,
                           ArrayList<String> dias) {
@@ -75,21 +70,17 @@ public abstract class Profissional extends Pessoa {
         this.diasDisponiveis.clear();
 
         for (String dia : dias) {
-
             this.diasDisponiveis.add(dia);
         }
 
     }
-
 
     public boolean atendeNoDia(String dia) {
 
         for (String diaDisponivel : diasDisponiveis) {
 
             if (diaDisponivel.equals(dia)) {
-
                 return true;
-
             }
 
         }
@@ -97,7 +88,6 @@ public abstract class Profissional extends Pessoa {
         return false;
 
     }
-
 
     public static boolean especialidadeValida(String esp) {
 
@@ -110,7 +100,7 @@ public abstract class Profissional extends Pessoa {
 
     }
 
-
+    // SOBRESCRITA: mesmo nome e parametros, classe filha redefine comportamento (resolvido em tempo de execucao)
     @Override
     public void exibirResumo() {
 
@@ -126,7 +116,6 @@ public abstract class Profissional extends Pessoa {
 
         }
 
-
         System.out.println(
             "Nome: " + getNome() +
             " | Espec: " + especialidade +
@@ -137,8 +126,6 @@ public abstract class Profissional extends Pessoa {
 
     }
 
-
     public abstract void registrarEspecifico();
 
 }
-

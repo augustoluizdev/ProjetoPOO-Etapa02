@@ -6,6 +6,7 @@ public class Consulta {
     public String tipo;
     public String status;
 
+    // SOBRECARGA: mesmo nome, parametros diferentes (resolvido em tempo de compilacao)
     public Consulta(String cpfPaciente, String nomeProfissional, String data, String horario) {
         this.cpfPaciente = cpfPaciente;
         this.nomeProfissional = nomeProfissional;
@@ -34,10 +35,12 @@ public class Consulta {
         this.status = status;
     }
 
+    // SOBRESCRITA: mesmo nome e parametros, classe filha redefine comportamento
     public void cancelar() {
         this.status = "cancelada";
     }
-    
+
+    // SOBRECARGA: mesmo nome, parametros diferentes (resolvido em tempo de compilacao)
     public String cancelar(String motivo) {
         this.status = "cancelada";
         return "Consulta cancelada. Motivo: " + motivo;
