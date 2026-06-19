@@ -133,6 +133,14 @@ public class ClinicaServico {
             );
         }
 
-        return new Pagamento(indiceConsulta, valorFinal, tipoPagamento, parcelas);
+        // Etapa 14: polimorfismo — retorna a subclasse correta conforme o tipo
+        if (tipoPagamento.equals("cartao")) {
+            return new PagamentoCartao(indiceConsulta, valorFinal, parcelas);
+        } else if (tipoPagamento.equals("convenio")) {
+            return new PagamentoConvenio(indiceConsulta, valorFinal, "");
+        } else {
+            // dinheiro ou pix
+            return new PagamentoDinheiro(indiceConsulta, valorFinal, tipoPagamento);
+        }
     }
 }

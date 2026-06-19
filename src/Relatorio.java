@@ -8,7 +8,6 @@ public class Relatorio {
         for (int i = 0; i < consultas.size(); i++) {
             Consulta consulta = consultas.get(i);
             System.out.println(consulta.exibirResumo());
-       
             String diag = buscarDiagnostico(i, atendimentos);
             if (!diag.equals("")) {
                 System.out.println("  Diagnostico: " + diag);
@@ -69,8 +68,9 @@ public class Relatorio {
             if (consulta.status.equals("cancelada")) canceladas++;
         }
 
+        // Etapa 14: ligacao dinamica — calcularValorFinal() de cada subclasse
         for (Pagamento pagamento : pagamentos) {
-            totalFaturado = totalFaturado + pagamento.valorFinal;
+            totalFaturado = totalFaturado + pagamento.calcularValorFinal();
         }
 
         for (Double multa : multas) {
