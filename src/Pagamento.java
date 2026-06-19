@@ -1,23 +1,37 @@
-public class Pagamento {
+public abstract class Pagamento {
+
     public int indiceConsulta;
-    public double valorFinal;
+    public double valorBase;
     public String tipoPagamento;
-    public int parcelas;
 
-    public Pagamento(int indiceConsulta, double valorFinal, String tipoPagamento) {
+    // SOBRECARGA de construtores
+    public Pagamento(int indiceConsulta, double valorBase) {
         this.indiceConsulta = indiceConsulta;
-        this.valorFinal = valorFinal;
-        this.tipoPagamento = tipoPagamento;
-        this.parcelas = 1;
+        this.valorBase = valorBase;
+        this.tipoPagamento = "desconhecido";
     }
 
-    public Pagamento(int indiceConsulta, double valorFinal, String tipoPagamento, int parcelas) {
+    public Pagamento(int indiceConsulta, double valorBase, String tipoPagamento) {
         this.indiceConsulta = indiceConsulta;
-        this.valorFinal = valorFinal;
+        this.valorBase = valorBase;
         this.tipoPagamento = tipoPagamento;
-        this.parcelas = parcelas;
     }
 
+    // Metodo abstrato: cada subclasse calcula o valor final de forma diferente
+    // LIGACAO DINAMICA: o metodo executado depende do tipo REAL do objeto, nao do tipo da referencia
+    public abstract double calcularValorFinal();
+
+    // Metodo concreto compartilhado por todas as subclasses
+    public String exibirResumo() {
+        double valorFinal = Math.round(calcularValorFinal() * 100.0) / 100.0;
+        return "Consulta #" + indiceConsulta
+                + " | Tipo: " + tipoPagamento
+                + " | Valor base: R$" + valorBase
+                + " | Valor final: R$" + valorFinal;
+    }
+
+    // Metodos estaticos mantidos para nao quebrar codigo existente
+    // SOBRECARGA: mesmo nome, parametros diferentes (resolvido em tempo de compilacao)
     public static double calcularValor(double valorBase) {
         return valorBase;
     }
@@ -25,30 +39,12 @@ public class Pagamento {
     public static double calcularValor(double valorBase, double percentualDesconto) {
         double desconto = valorBase * percentualDesconto / 100;
         double valor = valorBase - desconto;
-        if (valor < 0) {
-            valor = 0;
-        }
-        return valor;
+        return valor < 0 ? 0 : valor;
     }
 
     public static double calcularValor(double valorBase, double percentualDesconto, double multa) {
         double desconto = valorBase * percentualDesconto / 100;
         double valor = valorBase - desconto + multa;
-        if (valor < 0) {
-            valor = 0;
-        }
-        return valor;
-    }
-
-    public String exibirResumo() {
-       
-        double valorArredondado = Math.round(valorFinal * 100.0) / 100.0;
-        String resumo = "Consulta #" + indiceConsulta + " | Valor: R$" + valorArredondado
-                + " | Tipo: " + tipoPagamento + " | Parcelas: " + parcelas;
-        if (parcelas > 1) {
-            double valorParcela = Math.round((valorFinal / parcelas) * 100.0) / 100.0;
-            resumo = resumo + " (R$" + valorParcela + " cada)";
-        }
-        return resumo;
+        return valor < 0 ? 0 : valor;
     }
 }
