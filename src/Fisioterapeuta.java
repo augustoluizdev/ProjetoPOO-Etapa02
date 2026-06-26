@@ -1,9 +1,7 @@
-// Hierarquia de 3 niveis: Pessoa -> Profissional -> Fisioterapeuta
 public class Fisioterapeuta extends Profissional {
 
     private int totalSessoesPrevistas;
 
-    // SOBRECARGA de construtores
     public Fisioterapeuta(String nome) {
         super(nome, "fisioterapia");
         this.totalSessoesPrevistas = 0;
@@ -14,18 +12,21 @@ public class Fisioterapeuta extends Profissional {
         this.totalSessoesPrevistas = totalSessoesPrevistas;
     }
 
-    // SOBRESCRITA: classe filha redefine comportamento (resolvido em tempo de execucao)
     @Override
     public void exibirResumo() {
         System.out.println("[Fisioterapeuta] " + getNome()
-                + " | Reg: " + registroProfissional
-                + " | Valor: R$" + valorConsulta
+                + formatarDadosProfissionais()
                 + " | Sessoes previstas: " + totalSessoesPrevistas);
     }
 
     @Override
     public void registrarEspecifico() {
         System.out.println("[Fisioterapeuta] Sessoes previstas no plano: " + totalSessoesPrevistas);
+    }
+
+    @Override
+    public void registrarEspecifico(Atendimento atendimento) {
+        atendimento.adicionarProcedimento("Fisioterapia - sessoes previstas: " + totalSessoesPrevistas);
     }
 
     public int getTotalSessoesPrevistas() { return totalSessoesPrevistas; }

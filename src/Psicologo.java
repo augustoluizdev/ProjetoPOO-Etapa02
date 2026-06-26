@@ -1,9 +1,7 @@
-// Hierarquia de 3 niveis: Pessoa -> Profissional -> Psicologo
 public class Psicologo extends Profissional {
 
     private String abordagem;
 
-    // SOBRECARGA de construtores
     public Psicologo(String nome) {
         super(nome, "psicologia");
         this.abordagem = "";
@@ -14,18 +12,21 @@ public class Psicologo extends Profissional {
         this.abordagem = abordagem;
     }
 
-    // SOBRESCRITA
     @Override
     public void exibirResumo() {
         System.out.println("[Psicologo] " + getNome()
-                + " | Reg: " + registroProfissional
-                + " | Valor: R$" + valorConsulta
+                + formatarDadosProfissionais()
                 + " | Abordagem: " + abordagem);
     }
 
     @Override
     public void registrarEspecifico() {
         System.out.println("[Psicologo] Abordagem terapeutica: " + abordagem);
+    }
+
+    @Override
+    public void registrarEspecifico(Atendimento atendimento) {
+        atendimento.adicionarProcedimento("Psicologia - abordagem terapeutica: " + abordagem);
     }
 
     public String getAbordagem() { return abordagem; }

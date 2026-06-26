@@ -1,16 +1,24 @@
-// Hierarquia: Pagamento -> PagamentoConvenio
-// Aplica percentual de cobertura conforme o convenio:
-// SaudePlus=40%, VidaMais=30%, BemEstar=50%
+
 public class PagamentoConvenio extends Pagamento {
 
     private String nomeConvenio;
     private double percentualCobertura;
 
-    // SOBRECARGA de construtores
     public PagamentoConvenio(int indiceConsulta, double valorBase, String nomeConvenio) {
         super(indiceConsulta, valorBase, "convenio");
         this.nomeConvenio = nomeConvenio;
         this.percentualCobertura = resolverPercentual(nomeConvenio);
+    }
+
+    public PagamentoConvenio(int indiceConsulta, double valorBase, Convenio convenio) {
+        super(indiceConsulta, valorBase, "convenio");
+        if (convenio == null) {
+            this.nomeConvenio = "";
+            this.percentualCobertura = 0;
+        } else {
+            this.nomeConvenio = convenio.getNome();
+            this.percentualCobertura = convenio.getPercentualCobertura();
+        }
     }
 
     public PagamentoConvenio(int indiceConsulta, double valorBase,
@@ -20,7 +28,6 @@ public class PagamentoConvenio extends Pagamento {
         this.percentualCobertura = percentualCobertura;
     }
 
-    // Metodo privado auxiliar — nao precisa ser visivel externamente
     private double resolverPercentual(String convenio) {
         if (convenio == null) return 0;
         switch (convenio.toLowerCase()) {
@@ -31,8 +38,6 @@ public class PagamentoConvenio extends Pagamento {
         }
     }
 
-    // SOBRESCRITA
-    // LIGACAO DINAMICA: quando chamado via referencia Pagamento, executa ESTA implementacao
     @Override
     public double calcularValorFinal() {
         double cobertura = valorBase * percentualCobertura;

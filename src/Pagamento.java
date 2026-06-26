@@ -1,27 +1,21 @@
-public abstract class Pagamento {
+public abstract class Pagamento implements Exportavel {
 
-    public int indiceConsulta;
-    public double valorBase;
-    public String tipoPagamento;
+    private int indiceConsulta;
+    protected double valorBase;
+    private String tipoPagamento;
 
-    // SOBRECARGA de construtores
     public Pagamento(int indiceConsulta, double valorBase) {
-        this.indiceConsulta = indiceConsulta;
-        this.valorBase = valorBase;
-        this.tipoPagamento = "desconhecido";
+        this(indiceConsulta, valorBase, "desconhecido");
     }
 
     public Pagamento(int indiceConsulta, double valorBase, String tipoPagamento) {
-        this.indiceConsulta = indiceConsulta;
-        this.valorBase = valorBase;
-        this.tipoPagamento = tipoPagamento;
+        setIndiceConsulta(indiceConsulta);
+        setValorBase(valorBase);
+        setTipoPagamento(tipoPagamento);
     }
 
-    // Metodo abstrato: cada subclasse calcula o valor final de forma diferente
-    // LIGACAO DINAMICA: o metodo executado depende do tipo REAL do objeto, nao do tipo da referencia
     public abstract double calcularValorFinal();
 
-    // Metodo concreto compartilhado por todas as subclasses
     public String exibirResumo() {
         double valorFinal = Math.round(calcularValorFinal() * 100.0) / 100.0;
         return "Consulta #" + indiceConsulta
@@ -30,8 +24,38 @@ public abstract class Pagamento {
                 + " | Valor final: R$" + valorFinal;
     }
 
-    // Metodos estaticos mantidos para nao quebrar codigo existente
-    // SOBRECARGA: mesmo nome, parametros diferentes (resolvido em tempo de compilacao)
+    @Override
+    public String exportarDados() {
+        return "PAGAMENTO;" + indiceConsulta + ";" + tipoPagamento + ";"
+                + valorBase + ";" + calcularValorFinal();
+    }
+
+    public int getIndiceConsulta() {
+        return indiceConsulta;
+    }
+
+    public void setIndiceConsulta(int indiceConsulta) {
+        this.indiceConsulta = indiceConsulta;
+    }
+
+    public double getValorBase() {
+        return valorBase;
+    }
+
+    public void setValorBase(double valorBase) {
+        this.valorBase = valorBase < 0 ? 0 : valorBase;
+    }
+
+    public String getTipoPagamento() {
+        return tipoPagamento;
+    }
+
+    public void setTipoPagamento(String tipoPagamento) {
+        this.tipoPagamento = tipoPagamento == null || tipoPagamento.trim().isEmpty()
+                ? "desconhecido"
+                : tipoPagamento.trim();
+    }
+
     public static double calcularValor(double valorBase) {
         return valorBase;
     }

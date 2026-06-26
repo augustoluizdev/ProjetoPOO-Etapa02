@@ -23,7 +23,7 @@ public class Relatorio {
         boolean achou = false;
         for (int i = 0; i < consultas.size(); i++) {
             Consulta consulta = consultas.get(i);
-            if (consulta.nomeProfissional.equals(nomeProfissional)) {
+            if (consulta.getNomeProfissional().equals(nomeProfissional)) {
                 System.out.println(consulta.exibirResumo());
                 String diag = buscarDiagnostico(i, atendimentos);
                 if (!diag.equals("")) {
@@ -44,7 +44,7 @@ public class Relatorio {
         System.out.println("\n=== RELATORIO - " + dataInicio + " a " + dataFim + " ===");
         for (int i = 0; i < consultas.size(); i++) {
             Consulta consulta = consultas.get(i);
-            if (estaNoIntervalo(consulta.data, dataInicio, dataFim)) {
+            if (estaNoIntervalo(consulta.getData(), dataInicio, dataFim)) {
                 System.out.println(consulta.exibirResumo());
                 String diag = buscarDiagnostico(i, atendimentos);
                 if (!diag.equals("")) {
@@ -64,11 +64,10 @@ public class Relatorio {
         double totalEmMultas = 0;
 
         for (Consulta consulta : consultas) {
-            if (consulta.status.equals("realizada")) realizadas++;
-            if (consulta.status.equals("cancelada")) canceladas++;
+            if (consulta.getStatus().equals("realizada")) realizadas++;
+            if (consulta.getStatus().equals("cancelada")) canceladas++;
         }
 
-        // Etapa 14: ligacao dinamica — calcularValorFinal() de cada subclasse
         for (Pagamento pagamento : pagamentos) {
             totalFaturado = totalFaturado + pagamento.calcularValorFinal();
         }
@@ -86,8 +85,8 @@ public class Relatorio {
 
     public static String buscarDiagnostico(int indiceConsulta, ArrayList<Atendimento> atendimentos) {
         for (Atendimento atendimento : atendimentos) {
-            if (atendimento.indiceConsulta == indiceConsulta) {
-                return atendimento.diagnostico;
+            if (atendimento.getIndiceConsulta() == indiceConsulta) {
+                return atendimento.getDiagnostico();
             }
         }
         return "";

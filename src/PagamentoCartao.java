@@ -4,7 +4,6 @@ public class PagamentoCartao extends Pagamento {
     private static final int MAX_PARCELAS = 6;
     private static final double TAXA_PARCELA_EXTRA = 0.025;
 
-    // SOBRECARGA de construtores
     public PagamentoCartao(int indiceConsulta, double valorBase) {
         super(indiceConsulta, valorBase, "cartao");
         this.parcelas = 1;
@@ -15,8 +14,6 @@ public class PagamentoCartao extends Pagamento {
         this.parcelas = parcelas;
     }
 
-    // SOBRESCRITA
-    // LIGACAO DINAMICA: quando chamado via referencia Pagamento, executa ESTA implementacao
     @Override
     public double calcularValorFinal() {
         double valor = valorBase;

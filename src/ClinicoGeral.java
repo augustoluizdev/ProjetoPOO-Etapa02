@@ -2,7 +2,6 @@ public class ClinicoGeral extends Profissional {
 
     private String encaminhamento;
 
-    // SOBRECARGA de construtores
     public ClinicoGeral(String nome) {
         super(nome, "clinica geral");
         this.encaminhamento = "";
@@ -13,18 +12,21 @@ public class ClinicoGeral extends Profissional {
         this.encaminhamento = encaminhamento;
     }
 
-    // SOBRESCRITA
     @Override
     public void exibirResumo() {
         System.out.println("[ClinicoGeral] " + getNome()
-                + " | Reg: " + registroProfissional
-                + " | Valor: R$" + valorConsulta
+                + formatarDadosProfissionais()
                 + " | Encaminhamento: " + encaminhamento);
     }
 
     @Override
     public void registrarEspecifico() {
         System.out.println("[ClinicoGeral] Encaminhamento para: " + encaminhamento);
+    }
+
+    @Override
+    public void registrarEspecifico(Atendimento atendimento) {
+        atendimento.adicionarProcedimento("Clinica geral - encaminhamento: " + encaminhamento);
     }
 
     public String getEncaminhamento() { return encaminhamento; }

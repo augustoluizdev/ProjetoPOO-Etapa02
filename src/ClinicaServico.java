@@ -56,10 +56,10 @@ public class ClinicaServico {
         }
 
         for (Consulta consultaExistente : consultas) {
-            if (consultaExistente.nomeProfissional.equals(nomeProfissional)
-                    && consultaExistente.data.equals(data)
-                    && consultaExistente.horario.equals(horario)
-                    && !consultaExistente.status.equals("cancelada")) {
+            if (consultaExistente.getNomeProfissional().equals(nomeProfissional)
+                    && consultaExistente.getData().equals(data)
+                    && consultaExistente.getHorario().equals(horario)
+                    && !consultaExistente.getStatus().equals("cancelada")) {
                 throw new HorarioIndisponivelException(
                         "O horario informado ja esta ocupado."
                 );
@@ -78,9 +78,9 @@ public class ClinicaServico {
             throws ConsultaNaoEncontradaException {
 
         for (Consulta consulta : consultas) {
-            if (consulta.cpfPaciente.equals(cpfPaciente)
-                    && consulta.data.equals(data)
-                    && consulta.horario.equals(horario)) {
+            if (consulta.getCpfPaciente().equals(cpfPaciente)
+                    && consulta.getData().equals(data)
+                    && consulta.getHorario().equals(horario)) {
                 return consulta;
             }
         }
@@ -91,19 +91,38 @@ public class ClinicaServico {
     }
 
     public void cancelarConsulta(Consulta consulta) throws OperacaoInvalidaException {
-        if (consulta.status.equals("realizada")) {
+        if (consulta.getStatus().equals("realizada")) {
             throw new OperacaoInvalidaException(
                     "Nao e possivel cancelar uma consulta ja realizada."
             );
         }
 
-        if (consulta.status.equals("cancelada")) {
+        if (consulta.getStatus().equals("cancelada")) {
             throw new OperacaoInvalidaException(
                     "A consulta informada ja esta cancelada."
             );
         }
 
         consulta.cancelar();
+    }
+
+    public void remarcarConsulta(Consulta consulta,
+                                 ArrayList<Consulta> consultas,
+                                 String novaData,
+                                 String novoHorario)
+            throws OperacaoInvalidaException, HorarioIndisponivelException {
+
+        for (Consulta consultaExistente : consultas) {
+            if (consultaExistente != consulta
+                    && consultaExistente.getNomeProfissional().equals(consulta.getNomeProfissional())
+                    && consultaExistente.getData().equals(novaData)
+                    && consultaExistente.getHorario().equals(novoHorario)
+                    && !consultaExistente.getStatus().equals("cancelada")) {
+                throw new HorarioIndisponivelException("Novo horario ja esta ocupado.");
+            }
+        }
+
+        consulta.remarcar(novaData, novoHorario);
     }
 
     public Pagamento registrarPagamento(int indiceConsulta,
@@ -133,14 +152,36 @@ public class ClinicaServico {
             );
         }
 
-        // Etapa 14: polimorfismo — retorna a subclasse correta conforme o tipo
         if (tipoPagamento.equals("cartao")) {
             return new PagamentoCartao(indiceConsulta, valorFinal, parcelas);
         } else if (tipoPagamento.equals("convenio")) {
             return new PagamentoConvenio(indiceConsulta, valorFinal, "");
         } else {
-            // dinheiro ou pix
             return new PagamentoDinheiro(indiceConsulta, valorFinal, tipoPagamento);
         }
+    }
+
+    public Pagamento registrarPagamentoConvenio(int indiceConsulta,
+                                                double valorFinal,
+                                                Paciente paciente,
+                                                Profissional profissional)
+            throws PagamentoInvalidoException, ConvenioNaoCobreException {
+
+        if (valorFinal < 0) {
+            throw new PagamentoInvalidoException("O valor do pagamento nao pode ser negativo.");
+        }
+
+        if (paciente == null || paciente.getConvenio() == null
+                || paciente.getConvenioNome().trim().isEmpty()) {
+            throw new ConvenioNaoCobreException("Paciente nao possui convenio cadastrado.");
+        }
+
+        if (!paciente.getConvenio().cobreEspecialidade(profissional.getEspecialidade())) {
+            throw new ConvenioNaoCobreException(
+                    "Convenio nao cobre a especialidade: " + profissional.getEspecialidade()
+            );
+        }
+
+        return new PagamentoConvenio(indiceConsulta, valorFinal, paciente.getConvenio());
     }
 }

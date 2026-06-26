@@ -13,11 +13,8 @@ public class Main {
     static ArrayList<Double> multas                 = new ArrayList<Double>();
     static ArrayList<Pessoa> pessoas                = new ArrayList<Pessoa>();
 
-    // HashMap<String, Paciente>: busca por chave (CPF); mais eficiente que percorrer lista
     static HashMap<String, Paciente> pacientesPorCpf          = new HashMap<String, Paciente>();
-    // HashMap<String, Profissional>: busca por chave (nome); mais eficiente que percorrer lista
     static HashMap<String, Profissional> profissionaisPorNome = new HashMap<String, Profissional>();
-    // HashSet<String>: apenas verificacao de existencia; nao precisa de ordem
     static HashSet<String> cpfsCadastrados                    = new HashSet<String>();
 
     static ClinicaServico clinicaServico = new ClinicaServico();
@@ -29,7 +26,6 @@ public class Main {
         int opcao = -1;
         do {
             exibirMenuPrincipal();
-            // Etapa 12: try/catch em toda leitura de numero do usuario
             try {
                 opcao = Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
@@ -53,8 +49,6 @@ public class Main {
         scanner.close();
     }
 
-    // ===================== MENU PRINCIPAL =====================
-
     static void exibirMenuPrincipal() {
         System.out.println("\n--- MENU PRINCIPAL ---");
         System.out.println("1 - Pacientes");
@@ -66,8 +60,6 @@ public class Main {
         System.out.println("0 - Sair");
         System.out.print("Opcao: ");
     }
-
-    // ===================== PACIENTES =====================
 
     static void menuPacientes() {
         System.out.println("\n--- PACIENTES ---");
@@ -118,7 +110,6 @@ public class Main {
             return;
         }
 
-        // Etapa 12: try/catch para idade + finally com log
         int idade = 0;
         boolean idadeValida = false;
         while (!idadeValida) {
@@ -183,8 +174,6 @@ public class Main {
             p.exibirResumo();
         }
     }
-
-    // ===================== PROFISSIONAIS =====================
 
     static void menuProfissionais() {
         System.out.println("\n--- PROFISSIONAIS ---");
@@ -285,7 +274,7 @@ public class Main {
         while (true) {
             String dia = scanner.nextLine().trim().toLowerCase();
             if (dia.equals("fim")) break;
-            if (!dia.isEmpty()) p.diasDisponiveis.add(dia);
+            if (!dia.isEmpty()) p.adicionarDiaDisponivel(dia);
         }
     }
 
@@ -310,20 +299,20 @@ public class Main {
         }
     }
 
-    // ===================== CONSULTAS =====================
-
     static void menuConsultas() {
         System.out.println("\n--- CONSULTAS ---");
         System.out.println("1 - Agendar");
         System.out.println("2 - Cancelar");
-        System.out.println("3 - Listar");
+        System.out.println("3 - Remarcar");
+        System.out.println("4 - Listar");
         System.out.print("Opcao: ");
 
         int op = lerInteiro();
         switch (op) {
             case 1: agendarConsulta(); break;
             case 2: cancelarConsulta(); break;
-            case 3: listarConsultas(); break;
+            case 3: remarcarConsulta(); break;
+            case 4: listarConsultas(); break;
             default: System.out.println("Opcao invalida.");
         }
     }
@@ -358,7 +347,6 @@ public class Main {
         } catch (HorarioIndisponivelException e) {
             System.out.println("Horario indisponivel: " + e.getMessage());
         } finally {
-            // Etapa 12: finally com proposito real
             System.out.println("[LOG] --- Operacao de agendamento finalizada ---");
         }
     }
@@ -382,6 +370,32 @@ public class Main {
         }
     }
 
+    static void remarcarConsulta() {
+        System.out.print("CPF do paciente: ");
+        String cpf = scanner.nextLine().trim();
+        System.out.print("Data atual (DD/MM/AAAA): ");
+        String data = scanner.nextLine().trim();
+        System.out.print("Horario atual (HH:MM): ");
+        String horario = scanner.nextLine().trim();
+        System.out.print("Nova data (DD/MM/AAAA): ");
+        String novaData = scanner.nextLine().trim();
+        System.out.print("Novo horario (HH:MM): ");
+        String novoHorario = scanner.nextLine().trim();
+
+        try {
+            Consulta consulta = clinicaServico.buscarConsulta(consultas, cpf, data, horario);
+            clinicaServico.remarcarConsulta(consulta, consultas, novaData, novoHorario);
+            System.out.println("Consulta remarcada.");
+            System.out.println(consulta.exibirResumo());
+        } catch (ConsultaNaoEncontradaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (HorarioIndisponivelException e) {
+            System.out.println("Horario indisponivel: " + e.getMessage());
+        } catch (OperacaoInvalidaException e) {
+            System.out.println("Operacao invalida: " + e.getMessage());
+        }
+    }
+
     static void listarConsultas() {
         if (consultas.isEmpty()) {
             System.out.println("Nenhuma consulta registrada.");
@@ -391,8 +405,6 @@ public class Main {
             System.out.println("[" + i + "] " + consultas.get(i).exibirResumo());
         }
     }
-
-    // ===================== ATENDIMENTOS =====================
 
     static void menuAtendimentos() {
         System.out.println("\n--- ATENDIMENTOS ---");
@@ -404,31 +416,34 @@ public class Main {
         System.out.print("Diagnostico: ");
         String diag = scanner.nextLine().trim();
 
-        // Etapa 12: finally no atendimento
         try {
             if (indice < 0 || indice >= consultas.size()) {
                 throw new OperacaoInvalidaException("Indice de consulta invalido.");
             }
             Consulta consulta = consultas.get(indice);
-            if (!consulta.status.equals("agendada")) {
+            if (!consulta.getStatus().equals("agendada")
+                    && !consulta.getStatus().equals("remarcada")) {
                 throw new OperacaoInvalidaException(
-                        "Apenas consultas agendadas podem receber atendimento. Status: "
-                        + consulta.status
+                        "Apenas consultas agendadas ou remarcadas podem receber atendimento. Status: "
+                        + consulta.getStatus()
                 );
             }
             consulta.realizar();
             Atendimento atendimento = new Atendimento(indice, obs, diag);
+            Profissional profissional = clinicaServico.buscarProfissionalPorNome(
+                    profissionaisPorNome, consulta.getNomeProfissional()
+            );
+            profissional.registrarEspecifico(atendimento);
             atendimentos.add(atendimento);
             System.out.println("Atendimento registrado!");
         } catch (OperacaoInvalidaException e) {
             System.out.println("Erro: " + e.getMessage());
+        } catch (ProfissionalNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
         } finally {
-            // Etapa 12: finally com proposito real
             System.out.println("[LOG] --- Operacao de atendimento finalizada ---");
         }
     }
-
-    // ===================== PAGAMENTOS =====================
 
     static void menuPagamentos() {
         System.out.println("\n--- PAGAMENTOS ---");
@@ -444,7 +459,6 @@ public class Main {
         System.out.print("Opcao: ");
         int forma = lerInteiro();
 
-        // Etapa 12: finally no pagamento
         try {
             Pagamento pagamento = null;
 
@@ -455,13 +469,19 @@ public class Main {
                 int parcelas = lerInteiro();
                 pagamento = clinicaServico.registrarPagamento(indice, valor, "cartao", parcelas);
             } else if (forma == 3) {
-                System.out.print("Nome do convenio (SaudePlus/VidaMais/BemEstar): ");
-                String convenio = scanner.nextLine().trim();
-                pagamento = clinicaServico.registrarPagamento(indice, valor, "convenio", 1);
-                // ajusta o convenio no objeto criado
-                if (pagamento instanceof PagamentoConvenio) {
-                    System.out.println("Convenio: " + ((PagamentoConvenio) pagamento).getNomeConvenio());
+                if (indice < 0 || indice >= consultas.size()) {
+                    throw new PagamentoInvalidoException("Indice de consulta invalido.");
                 }
+                Consulta consulta = consultas.get(indice);
+                Paciente paciente = clinicaServico.buscarPacientePorCpf(
+                        pacientesPorCpf, consulta.getCpfPaciente()
+                );
+                Profissional profissional = clinicaServico.buscarProfissionalPorNome(
+                        profissionaisPorNome, consulta.getNomeProfissional()
+                );
+                pagamento = clinicaServico.registrarPagamentoConvenio(
+                        indice, valor, paciente, profissional
+                );
             } else {
                 throw new PagamentoInvalidoException("Forma de pagamento invalida.");
             }
@@ -473,13 +493,16 @@ public class Main {
 
         } catch (PagamentoInvalidoException e) {
             System.out.println("Erro: " + e.getMessage());
+        } catch (PacienteNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (ProfissionalNaoEncontradoException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (ConvenioNaoCobreException e) {
+            System.out.println("Convenio nao cobre: " + e.getMessage());
         } finally {
-            // Etapa 12: finally com proposito real
             System.out.println("[LOG] --- Operacao de pagamento finalizada ---");
         }
     }
-
-    // ===================== RELATORIOS =====================
 
     static void menuRelatorios() {
         System.out.println("\n--- RELATORIOS ---");
@@ -487,6 +510,7 @@ public class Main {
         System.out.println("2 - Resumo financeiro");
         System.out.println("3 - Relatorio unificado de pessoas (ligacao dinamica)");
         System.out.println("4 - Relatorio de pagamentos (ligacao dinamica)");
+        System.out.println("5 - Exportacao de dados operacionais");
         System.out.print("Opcao: ");
 
         int op = lerInteiro();
@@ -498,30 +522,27 @@ public class Main {
                 Relatorio.gerarResumoFinanceiro(consultas, pagamentos, multas);
                 break;
             case 3:
-                // Etapa 14: List<Pessoa> + ligacao dinamica
                 relatorioPessoas();
                 break;
             case 4:
-                // Etapa 14: List<Pagamento> + ligacao dinamica
                 relatorioPagamentos();
+                break;
+            case 5:
+                exportarDadosOperacionais();
                 break;
             default:
                 System.out.println("Opcao invalida.");
         }
     }
 
-    // Etapa 14: percorre List<Pessoa> e chama exibirResumo() via ligacao dinamica
-    // LIGACAO DINAMICA: o metodo executado depende do tipo REAL do objeto, nao do tipo da referencia
     static void relatorioPessoas() {
         System.out.println("\n=== RELATORIO UNIFICADO DE CADASTROS ===");
         int totalPacientes = 0;
         int totalProfissionais = 0;
 
         for (Pessoa pessoa : pessoas) {
-            // LIGACAO DINAMICA: exibirResumo() do tipo real (Paciente, Fisioterapeuta, etc)
             pessoa.exibirResumo();
 
-            // DYNAMIC CASTING: instanceof para identificar tipo real
             if (pessoa instanceof Paciente) {
                 Paciente pac = (Paciente) pessoa;
                 System.out.println("  Convenio: " + pac.getConvenioNome()
@@ -539,8 +560,6 @@ public class Main {
         System.out.println("Total de profissionais: " + totalProfissionais);
     }
 
-    // Etapa 14: percorre List<Pagamento> e chama calcularValorFinal() via ligacao dinamica
-    // LIGACAO DINAMICA: o metodo executado depende do tipo REAL do objeto, nao do tipo da referencia
     static void relatorioPagamentos() {
         System.out.println("\n=== RELATORIO DE PAGAMENTOS ===");
         if (pagamentos.isEmpty()) {
@@ -549,16 +568,29 @@ public class Main {
         }
         double total = 0;
         for (Pagamento pagamento : pagamentos) {
-            // LIGACAO DINAMICA: calcularValorFinal() do tipo real
             System.out.println(pagamento.exibirResumo());
             total += pagamento.calcularValorFinal();
         }
         System.out.printf("Total arrecadado: R$%.2f%n", total);
     }
 
-    // ===================== HELPERS DE LEITURA SEGURA =====================
+    static void exportarDadosOperacionais() {
+        System.out.println("\n=== EXPORTACAO DE DADOS OPERACIONAIS ===");
+        ArrayList<Exportavel> exportaveis = new ArrayList<Exportavel>();
+        exportaveis.addAll(consultas);
+        exportaveis.addAll(atendimentos);
+        exportaveis.addAll(pagamentos);
 
-    // Etapa 12: leitura segura de inteiro — nunca encerra a aplicacao
+        if (exportaveis.isEmpty()) {
+            System.out.println("Nenhum dado exportavel registrado.");
+            return;
+        }
+
+        for (Exportavel exportavel : exportaveis) {
+            System.out.println(exportavel.exportarDados());
+        }
+    }
+
     static int lerInteiro() {
         while (true) {
             try {
@@ -569,7 +601,6 @@ public class Main {
         }
     }
 
-    // Etapa 12: leitura segura de double — nunca encerra a aplicacao
     static double lerDouble(String mensagem) {
         while (true) {
             System.out.print(mensagem);

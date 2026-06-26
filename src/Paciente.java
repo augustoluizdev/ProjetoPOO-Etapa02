@@ -1,7 +1,7 @@
 public class Paciente extends Pessoa {
 
     private int idade;
-    private String convenioNome;
+    private Convenio convenio;
     private boolean ativo;
 
 
@@ -9,8 +9,8 @@ public class Paciente extends Pessoa {
 
         super(nome, cpf, "", "");
 
-        this.idade = 0;
-        this.convenioNome = "";
+        setIdade(0);
+        setConvenioNome("");
         this.ativo = true;
 
     }
@@ -20,8 +20,8 @@ public class Paciente extends Pessoa {
 
         super(nome, cpf, telefone, "");
 
-        this.idade = idade;
-        this.convenioNome = "";
+        setIdade(idade);
+        setConvenioNome("");
         this.ativo = true;
 
     }
@@ -32,8 +32,8 @@ public class Paciente extends Pessoa {
 
         super(nome, cpf, telefone, "");
 
-        this.idade = idade;
-        this.convenioNome = convenioNome;
+        setIdade(idade);
+        setConvenioNome(convenioNome);
         this.ativo = true;
 
     }
@@ -41,7 +41,7 @@ public class Paciente extends Pessoa {
 
     public void complementar(int idade, String telefone) {
 
-        this.idade = idade;
+        setIdade(idade);
         setTelefone(telefone);
 
     }
@@ -49,9 +49,9 @@ public class Paciente extends Pessoa {
 
     public void complementar(int idade, String telefone, String convenioNome) {
 
-        this.idade = idade;
+        setIdade(idade);
         setTelefone(telefone);
-        this.convenioNome = convenioNome;
+        setConvenioNome(convenioNome);
 
     }
 
@@ -69,17 +69,34 @@ public class Paciente extends Pessoa {
 
 
     public void setIdade(int idade) {
-        this.idade = idade;
+        if (idade < 0) {
+            this.idade = 0;
+        } else {
+            this.idade = idade;
+        }
     }
 
 
     public String getConvenioNome() {
-        return convenioNome;
+        if (convenio == null) {
+            return "";
+        }
+        return convenio.getNome();
     }
 
 
     public void setConvenioNome(String convenioNome) {
-        this.convenioNome = convenioNome;
+        this.convenio = Convenio.criarPadrao(convenioNome);
+    }
+
+
+    public Convenio getConvenio() {
+        return convenio;
+    }
+
+
+    public void setConvenio(Convenio convenio) {
+        this.convenio = convenio;
     }
 
 
@@ -99,7 +116,7 @@ public class Paciente extends Pessoa {
             " | CPF: " + getCpf() +
             " | Idade: " + idade +
             " | Telefone: " + getTelefone() +
-            " | Convenio: " + convenioNome +
+            " | Convenio: " + getConvenioNome() +
             " | Ativo: " + status
         );
 

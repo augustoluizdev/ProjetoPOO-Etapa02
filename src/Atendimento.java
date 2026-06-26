@@ -1,65 +1,53 @@
 import java.util.ArrayList;
 
-public class Atendimento {
-    public int indiceConsulta;
-    public String observacoes;
-    public String diagnostico;
-    
-    public ArrayList<String> procedimentos;
+public class Atendimento implements Exportavel {
+    private int indiceConsulta;
+    private Prontuario prontuario;
 
-    // SOBRECARGA: mesmo nome, parametros diferentes (resolvido em tempo de compilacao)
     public Atendimento(int indiceConsulta, String observacoes) {
-        this.indiceConsulta = indiceConsulta;
-        this.observacoes = observacoes;
-        this.diagnostico = "";
-        this.procedimentos = new ArrayList<String>();
+        this(indiceConsulta, observacoes, "");
     }
 
     public Atendimento(int indiceConsulta, String observacoes, String diagnostico) {
         this.indiceConsulta = indiceConsulta;
-        this.observacoes = observacoes;
-        this.diagnostico = diagnostico;
-        this.procedimentos = new ArrayList<String>();
+        this.prontuario = new Prontuario(observacoes, diagnostico);
     }
 
     public Atendimento(int indiceConsulta, String observacoes, String diagnostico,
                        ArrayList<String> procedimentos) {
-        this.indiceConsulta = indiceConsulta;
-        this.observacoes = observacoes;
-        this.diagnostico = diagnostico;
-        this.procedimentos = new ArrayList<String>();
+        this(indiceConsulta, observacoes, diagnostico);
         for (String procedimento : procedimentos) {
-            this.procedimentos.add(procedimento);
+            this.prontuario.adicionarProcedimento(procedimento);
         }
     }
 
-    // SOBRECARGA: mesmo nome, parametros diferentes (resolvido em tempo de compilacao)
     public void adicionarProcedimento(String procedimento) {
-        procedimentos.add(procedimento);
+        prontuario.adicionarProcedimento(procedimento);
     }
 
     public void adicionarProcedimento(ArrayList<String> procs) {
-        for (String procedimento : procs) {
-            procedimentos.add(procedimento);
-        }
+        prontuario.adicionarProcedimentos(procs);
     }
 
     public String exibirResumo() {
-        String resumo = "Observacoes: " + observacoes;
+        return prontuario.exibirResumo();
+    }
 
-        if (!diagnostico.equals("")) {
-            resumo = resumo + "\nDiagnostico: " + diagnostico;
-        }
+    @Override
+    public String exportarDados() {
+        return "ATENDIMENTO;" + indiceConsulta + ";" + prontuario.getObservacoes()
+                + ";" + prontuario.getDiagnostico() + ";" + prontuario.getDataRegistro();
+    }
 
-        if (procedimentos.size() > 0) {
-            resumo = resumo + "\nProcedimentos: ";
-            for (int i = 0; i < procedimentos.size(); i++) {
-                resumo = resumo + procedimentos.get(i);
-                if (i < procedimentos.size() - 1) {
-                    resumo = resumo + ", ";
-                }
-            }
-        }
-        return resumo;
+    public int getIndiceConsulta() {
+        return indiceConsulta;
+    }
+
+    public Prontuario getProntuario() {
+        return prontuario;
+    }
+
+    public String getDiagnostico() {
+        return prontuario.getDiagnostico();
     }
 }
